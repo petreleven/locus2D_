@@ -10,9 +10,10 @@ Makefile*
 build/
 
 # Ignore CMake files and directories in src and its subdirectories
+src/cmake_install.cmake
 src/CMakeFiles/
 src/CMakeCache.txt
-src/cmake_install.cmake
+
 
 # Ignore CMake files and directories in include and its subdirectories
 include/CMakeFiles/
