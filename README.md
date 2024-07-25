@@ -7,9 +7,10 @@
 
 
 ### Features
-- **Particle system:**-a particle system with configurable rules on the generation speed, age of particles as well as  damping ratio. Check out the firework simulations using this system
+- **Particle system:** A particle system with configurable rules on the generation speed, age of particles, as well as the damping ratio. Check out the firework simulations using this system
 
-  ![Fireworks Demo](./demo_videos/fireworks.gif)  
+  <img src="./demo_videos/fireworks.gif" alt="Fireworks Demo" width="400" height="300">
+
 
 ### Getting Started
 **THIS PROJECT USES CMAKE AS THE BUILD TOOL**
