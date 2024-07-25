@@ -1,0 +1,26 @@
+# Ignore CMake files and directories
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+# Ignore all Makefile files
+Makefile*
+# Ignore .env files
+.env
+# Ignore build directory (if using out-of-source builds)
+build/
+
+# Ignore CMake files and directories in src and its subdirectories
+src/CMakeFiles/
+src/CMakeCache.txt
+src/cmake_install.cmake
+
+# Ignore CMake files and directories in include and its subdirectories
+include/CMakeFiles/
+include/CMakeCache.txt
+include/cmake_install.cmake
+
+# Ignore any CMakeFiles directory anywhere in the repository
+**/CMakeFiles/
+**/MakeFile/
+**/CMakeCache.txt
+**/cmake_install.cmake
