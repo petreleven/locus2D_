@@ -1,14 +1,13 @@
 # locus2D
-**locus2D** is a  physics engine made in C++ with **Raylib** as oa rendering abstraction.
+**locus2D** is a  physics engine made in C++ with **Raylib** as the rendering abstraction.
 
 
 - **Collision Detection:** pending
 - **Verlet Integration:** pending
 
-### Exciting Addition: Fireworks Particle System
 
-🎆 **Features** 🎆
--**Particle system:**--a particle system with configurable rules on the generation speed, age of particles as well as  damping ratio. Check out the firework simulations using this system
+### Features
+- **Particle system:**--a particle system with configurable rules on the generation speed, age of particles as well as  damping ratio. Check out the firework simulations using this system
 
   ![Fireworks Demo](./demo_videos/fireworks.webm)  
 
