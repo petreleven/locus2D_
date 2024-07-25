@@ -1,5 +1,4 @@
 #include "Fireworks.h"
-#include <iostream>
 #include <raylib.h>
 
 FireWorkDemo::FireWorkDemo() : Application() {
@@ -57,7 +56,6 @@ void FireWorkDemo::create(unsigned type, unsigned count,
   }
 }
 void FireWorkDemo::create(unsigned type, const FireWork *parent) {
-  std::cout << "Create called " << nextFirework << "\n";
   FireWorkRule *rule = &fireworkrules[type];
   rule->create(&fireworks[nextFirework], parent);
   nextFirework += 1;
