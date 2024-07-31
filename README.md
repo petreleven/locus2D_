@@ -1,29 +1,35 @@
-# locus2D
-**locus2D** is a  physics engine made in C++ with **Raylib** as the rendering abstraction.
+# **locus2D**
 
+**locus2D** is a C++ physics engine using **Raylib** for rendering abstraction.
 
-- **Collision Detection:** pending
-- **Verlet Integration:** pending
+## Features
 
+- **Particle System**: 
+  Configurable particle system with adjustable generation speed, particle age, and damping ratio. Check out the firework simulations:
 
-### Features
-- **Particle system:** A particle system with configurable rules on the generation speed, age of particles, as well as the damping ratio. Check out the firework simulations using this system
+  <img src="./demo_videos/fireworks.gif" alt="Fireworks Demo" width="250" height="250">
 
-  <img src="./demo_videos/fireworks.gif" alt="Fireworks Demo" width="400" height="400">
-- **Spring and harmonic damped spring system:** A configurable spring system that can be used to simulate behaviours such as a camera follow system, vehicle suspension etc. The demo illustrates a bridge made using the springs with the endpoints unaffected by gravity
-  <img src="./demo_videos/spring_bridge.gif" alt="Fireworks Demo" width="400" height="400">
+- **Spring and Harmonic Dampened Spring System**: 
+  Configurable spring system for simulating behaviors such as camera follow, vehicle suspension, etc. Includes a bridge simulation with springs:
 
-### Getting Started
-**THIS PROJECT USES CMAKE AS THE BUILD TOOL**
+  <img src="./demo_videos/spring_bridge.gif" alt="Spring Bridge Demo" width="250" height="250">
+
+- **Collision Detection**: Pending
+- **Verlet Integration**: Pending
+
+## Getting Started
+
+**This project uses CMake as the build tool.**
+
 1. **Clone the Repository:**
 
     ```bash
-    git clone https://github.com/yourusername/locus2D_.git
+    git clone https://github.com/yourusername/locus2D.git
     ```
 
 2. **Build the Project:**
 
-    Navigate to the project directory and follow the build instructions to compile the engine and run the examples.
+    Navigate to the project directory and compile the engine:
 
     ```bash
     cd locus2D
@@ -32,4 +38,3 @@
     cmake ..
     make
     ```
-
