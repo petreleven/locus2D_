@@ -7,7 +7,7 @@
 <table>
   <tr>
     <td>
-      <b>Particle System</b>: 
+       <b style="color:orange;">Particle System</b>: 
       Configurable particle system with adjustable generation speed, particle age, and damping ratio. Check out the firework simulations.
     </td>
     <td>
@@ -16,7 +16,7 @@
   </tr>
   <tr>
     <td>
-      <b>Spring and Harmonic Dampened Spring System</b>b>: 
+      <b style="color:orange;">Spring and Harmonic Dampened Spring System</b>: 
       Configurable spring system for simulating behaviors such as camera follow, vehicle suspension, etc. Includes a bridge simulation with springs.
     </td>
     <td>
