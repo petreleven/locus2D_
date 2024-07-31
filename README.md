@@ -6,13 +6,17 @@
 
 - **Particle System**: 
   Configurable particle system with adjustable generation speed, particle age, and damping ratio. Check out the firework simulations:
-
-  <img src="./demo_videos/fireworks.gif" alt="Fireworks Demo" width="250" height="250">
+  
+  ![Fireworks Demo](./demo_videos/fireworks.gif)
+  
+  <br>
 
 - **Spring and Harmonic Dampened Spring System**: 
   Configurable spring system for simulating behaviors such as camera follow, vehicle suspension, etc. Includes a bridge simulation with springs:
+  
+  ![Spring Bridge Demo](./demo_videos/spring_bridge.gif)
 
-  <img src="./demo_videos/spring_bridge.gif" alt="Spring Bridge Demo" width="250" height="250">
+  <br>
 
 - **Collision Detection**: Pending
 - **Verlet Integration**: Pending
