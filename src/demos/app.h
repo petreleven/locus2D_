@@ -6,7 +6,7 @@ protected:
   int screenWidth;
   int screenHeight;
   int fps = 60;
-  char *title;
+  char *title =nullptr;
 
 public:
   Application();

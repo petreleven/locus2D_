@@ -38,7 +38,7 @@ public:
   void normalize() {
     real _magnitude = magnitude();
     if (_magnitude > 0) {
-      x = z * 1 / _magnitude;
+      x = x * 1 / _magnitude;
       y = y * 1 / _magnitude;
       z = z * 1 / _magnitude;
     }

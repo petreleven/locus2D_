@@ -5,11 +5,13 @@ Particle::Particle() {
   char *a = "Locus";
   SetWindowTitle(a);
 }
-Particle::Particle(Vector3 pos, Vector3 vel, real dampping, real mass) {
-  position = pos;
-  velocity = vel;
-  damping = dampping;
+Particle::Particle(Vector3 pos, Vector3 vel, real dampping, real mass,
+                   Color c) {
+  Particle::position = pos;
+  Particle::velocity = vel;
+  Particle::damping = dampping;
   setInverseMass(mass);
+  Particle::c = c;
 }
 void Particle::integrate(real dt) {
 
@@ -22,10 +24,11 @@ void Particle::integrate(real dt) {
   velocity.addScaledVector(resolvedAcc, dt);
   // add drag
   velocity *= damping;
+  clearAccumulator();
 }
 
 void Particle::setVelocity(real x, real y, real z) {
-  velocity = Vector3(x, y, z) * 3780;
+  velocity = Vector3(x, y, z);
 }
 void Particle::setAcceleration(real x, real y, real z) {
   acceleration = Vector3(x, y, z);
@@ -37,5 +40,10 @@ void Particle::setPosition(real x, real y, real z) {
   position = Vector3(x, y, z);
 }
 
-void Particle::render() { DrawCircle(position.x, position.y, 5, ORANGE); }
+void Particle::render() { DrawCircle(position.x, position.y, 15, this->c); }
 void Particle::clearAccumulator() { forceAccum = Vector3(0.f, 0.f, 0.f); }
+
+void Particle::addForce(const Vector3 &force) { forceAccum += force; }
+
+real Particle::getMass() { return mass; }
+void Particle::setColor(Color c) { Particle::c = c; }

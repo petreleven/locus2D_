@@ -3,7 +3,7 @@
 Application::Application() {
   screenWidth = 800;
   screenHeight = 800;
-  char *x = (char *)"LOCUS2D";
+  char *x = title==nullptr ? (char *)"LOCUS2D" : title;
   InitWindow(screenWidth, screenHeight, x);
   SetTargetFPS(60);
 }
