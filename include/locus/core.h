@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <ctime>
 #include <random>
+#include <ostream>
 
 static std::mt19937 rng(static_cast<unsigned>(std::time(nullptr)));
 namespace locus {
@@ -31,7 +32,8 @@ public:
     std::uniform_real_distribution<real> distribution(min, max);
     return distribution(rng);
   }
-  real real_sqrt(real squareMag) { return std::sqrt(squareMag); }
+  real real_sqrt(real squareMag) { return sqrtf(squareMag); }
+
 
   real magnitude() { return real_sqrt(x * x + y * y + z * z); }
   real squareMagnitude() const { return x * x + y * y + z * z; }
@@ -109,4 +111,7 @@ public:
     return *this;
   }
 };
+
+
+
 } // namespace locus

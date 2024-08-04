@@ -18,7 +18,7 @@ add_subdirectory(src/demos/Ballistic)
 add_subdirectory(src/demos/Bridge)
 add_subdirectory(src/demos/Fireworks)
 add_executable(main main.cpp)
-target_link_libraries(main PUBLIC raylib core particle precision app Ballistics Fireworks  forcegenerator Bridge)
+target_link_libraries(main PUBLIC raylib core particle precision app Ballistics Fireworks  forcegenerator Bridge pcontacts)
 target_include_directories(main PUBLIC
               "${PROJECT_BINARY_DIR}"
                "${PROJECT_SOURCE_DIR}/include/locus"

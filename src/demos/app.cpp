@@ -16,7 +16,8 @@ Application::Application(int _screenWidth, int _screenHeight, char *_title) {
   SetTargetFPS(60);
 }
 void Application::startDraw() {
-  Color background{23, 59, 69, 1};
+
+  Color background{87, 10, 87, 255};
   BeginDrawing();
   ClearBackground(background);
 }

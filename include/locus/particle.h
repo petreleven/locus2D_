@@ -15,6 +15,7 @@ public:
   Vector3 forceAccum;
   Color c;
 
+
 protected:
   real inverseMass;
   real mass;
@@ -22,14 +23,8 @@ protected:
 public:
   Particle();
   Particle(Vector3 pos, Vector3 vel, real dampping, real mass, Color c);
-  void setInverseMass(real _inverseMass) {
-    inverseMass = _inverseMass;
-    mass = 1 / inverseMass;
-  }
-  void setMass(real _mass) {
-    mass = _mass;
-    inverseMass = (1 / _mass);
-  }
+  void setInverseMass(real _inverseMass);
+  void setMass(real _mass);
   void setVelocity(real x, real y, real z);
   void setAcceleration(real x, real y, real z);
   void setDamping(real);
@@ -39,5 +34,6 @@ public:
   void addForce(const Vector3 &force);
   void setColor(Color c);
   real getMass();
+  real getInverseMass() const;
   void render();
 };
