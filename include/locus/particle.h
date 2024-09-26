@@ -33,6 +33,7 @@ public:
   void integrate(real dt);
   void addForce(const Vector3 &force);
   void setColor(Color c);
+  real radius = 5;
   real getMass();
   real getInverseMass() const;
   void render();

@@ -3,8 +3,8 @@
 #include <cmath>
 #include <cstdlib>
 #include <ctime>
-#include <random>
 #include <ostream>
+#include <random>
 
 static std::mt19937 rng(static_cast<unsigned>(std::time(nullptr)));
 namespace locus {
@@ -34,7 +34,6 @@ public:
   }
   real real_sqrt(real squareMag) { return sqrtf(squareMag); }
 
-
   real magnitude() { return real_sqrt(x * x + y * y + z * z); }
   real squareMagnitude() const { return x * x + y * y + z * z; }
   void normalize() {
@@ -61,6 +60,12 @@ public:
     y += v.y;
     z += v.z;
   }
+  Vector3 operator+(locus::real &sc) {
+    x += sc;
+    y += sc;
+    z += sc;
+    return Vector3(x, y, z);
+  }
   // Return and Vector added to this
   Vector3 operator+(const Vector3 &v) const {
     return Vector3(x + v.x, y + v.y, z + v.z);
@@ -72,7 +77,7 @@ public:
     z -= v.z;
   }
   // SUUBSTRACT AND RETURN NEW Vec3
-  Vector3 operator-(const Vector3 &v) const {
+  Vector3 operator-(const Vector3 v) const {
     return Vector3(x - v.x, y - v.y, z - v.z);
   }
   // add scaled Vector
@@ -110,8 +115,8 @@ public:
     z = v.z;
     return *this;
   }
+  static Vector3 Zero() { return Vector3(0.f, 0.f, 0.f); }
+  static Vector3 Up(){return  Vector3(0, -1.f, 0.f);}
 };
-
-
 
 } // namespace locus

@@ -55,14 +55,15 @@ public:
   void updateForce(Particle *particle, real duration) override;
 };
 
-class ParticleSpring : public ParticleForceGenerator {
+class ParticleAnchoredSpring : public ParticleForceGenerator {
 private:
   real springConstant;
   real restLength;
   Particle *other;
 
 public:
-  ParticleSpring(real restLength, real springConstant, Particle *other);
+  ParticleAnchoredSpring() : other(nullptr){};
+  ParticleAnchoredSpring(real restLength, real springConstant, Particle *other);
   void updateForce(Particle *particle, real duration) override;
 };
 
@@ -78,11 +79,30 @@ public:
   void updateForce(Particle *particle, real duration) override;
 };
 
-class ParticleFakeSpring : public ParticleForceGenerator{
-    real damping;
-    real springConstant;
-    Particle *anchor;
-    public:
-    ParticleFakeSpring(real springConstant, real damping, Particle *anchor);
-    void updateForce(Particle *particle, real duration) override;
+class ParticleFakeSpring : public ParticleForceGenerator {
+  real damping;
+  real springConstant;
+  Particle *anchor;
+
+public:
+  ParticleFakeSpring(real springConstant, real damping, Particle *anchor);
+  void updateForce(Particle *particle, real duration) override;
+};
+
+class ParticleSpring{
+private:
+  real springConstant;
+  real restLength;
+  real damping;
+
+public:
+  ParticleSpring();
+  ParticleSpring(real restLength, real springConstant, real damping);
+  void updateForce(Particle *particleAB[2], real duration);
+  void setRestLength(real length){
+      restLength = length;
+  }
+  void setSpringK(real K){
+       springConstant=K;
+   }
 };

@@ -43,7 +43,7 @@ void Particle::setPosition(real x, real y, real z) {
   position = Vector3(x, y, z);
 }
 
-void Particle::render() { DrawCircle(position.x, position.y, 30, this->c); }
+void Particle::render() { DrawCircle(position.x, position.y, radius, this->c); }
 void Particle::clearAccumulator() { forceAccum = locus::Vector3(0.f, 0.f, 0.f); }
 
 void Particle::addForce(const Vector3 &force) { forceAccum += force; }

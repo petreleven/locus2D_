@@ -33,24 +33,24 @@ Bridge::Bridge(locus::ParticleForceRegistry &registery)
   ParticleGravity *g = new ParticleGravity(locus::Vector3(0.f, 600.f, 0.f));
   locus::real K = 200.f;
   for (unsigned i = 0; i < maxPoints - 3; i++) {
-    ParticleSpring *springForce =
-        new ParticleSpring(suspensionLength, K, &points[i]);
+    ParticleAnchoredSpring *springForce =
+        new ParticleAnchoredSpring(suspensionLength, K, &points[i]);
     registery.add(&points[i + 1], springForce);
-    ParticleSpring *springForceBackWard =
-        new ParticleSpring(suspensionLength, K, &points[i + 1]);
+    ParticleAnchoredSpring *springForceBackWard =
+        new ParticleAnchoredSpring(suspensionLength, K, &points[i + 1]);
     registery.add(&points[i], springForceBackWard);
     registery.add(&points[i], g);
   }
   // 3rd last point also affected by gravity
   registery.add(&points[maxPoints - 3], g);
   // Suspension between 2nd last point and first point
-  ParticleSpring *springForceSusp1 =
-      new ParticleSpring(suspensionLength, K, &points[maxPoints - 2]);
+  ParticleAnchoredSpring *springForceSusp1 =
+      new ParticleAnchoredSpring(suspensionLength, K, &points[maxPoints - 2]);
 
   registery.add(&points[0], springForceSusp1);
   // Suspension between  last point and 3rd last point
-  ParticleSpring *springForceSusp2 =
-      new ParticleSpring(suspensionLength, K, &points[maxPoints - 1]);
+  ParticleAnchoredSpring *springForceSusp2 =
+      new ParticleAnchoredSpring(suspensionLength, K, &points[maxPoints - 1]);
   registery.add(&points[maxPoints - 3], springForceSusp2);
 }
 

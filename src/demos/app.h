@@ -6,9 +6,10 @@ protected:
   int screenWidth;
   int screenHeight;
   int fps = 60;
-  char *title =nullptr;
+  char *title = nullptr;
 
 public:
+  Camera2D mainCamera;
   Application();
   Application(int screenWidth, int screenHeight, char *title);
   virtual void startDraw();
@@ -18,5 +19,4 @@ public:
   virtual void key(int button);
   virtual void mouse();
   virtual int getFps() const;
-
 };

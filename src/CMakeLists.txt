@@ -4,6 +4,7 @@ add_library(core INTERFACE)
 add_library(particle particle.cpp)
 add_library(forcegenerator forcegenerator.cpp)
 add_library(pcontacts pcontacts.cpp)
+add_library(plinks plinks.cpp)
 
 
 # Specify the include directories for the header-only libraries
@@ -21,3 +22,4 @@ target_link_libraries(core  INTERFACE precision )
 target_link_libraries(particle PUBLIC core)
 target_link_libraries(forcegenerator PUBLIC particle)
 target_link_libraries(pcontacts PUBLIC particle)
+target_link_libraries(plinks PUBLIC pcontacts)

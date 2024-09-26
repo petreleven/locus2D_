@@ -1,7 +1,5 @@
 #include "../include/locus/forcegenerator.h"
-#include <cmath>
-#include <iostream>
-#include <raylib.h>
+
 using namespace locus;
 ParticleForceRegistry::ParticleForceRegistry() {}
 
@@ -50,14 +48,15 @@ void ParticleDrag::updateForce(Particle *particle, real duration) {
   particle->addForce(drag);
 }
 
-ParticleSpring::ParticleSpring(real restLength, real springConstant,
-                               Particle *other) {
-  ParticleSpring::restLength = restLength;
-  ParticleSpring::springConstant = springConstant;
-  ParticleSpring::other = other;
+ParticleAnchoredSpring::ParticleAnchoredSpring(real restLength,
+                                               real springConstant,
+                                               Particle *other) {
+  ParticleAnchoredSpring::restLength = restLength;
+  ParticleAnchoredSpring::springConstant = springConstant;
+  ParticleAnchoredSpring::other = other;
 }
 
-void ParticleSpring::updateForce(Particle *particle, real duration) {
+void ParticleAnchoredSpring::updateForce(Particle *particle, real duration) {
   // hookes law f = -k (dl)
   locus::Vector3 difference = particle->position - other->position;
   real magnitudeDiff = difference.magnitude();
@@ -118,8 +117,6 @@ void ParticleFakeSpring::updateForce(Particle *particle, real duration) {
   locus::Vector3 p_vo = particle->velocity;
   real Y = 0.5 * real_sqrtf(4 * springConstant - damping * damping);
   if (std::abs(Y) <= 0.0001f) {
-    std::cerr << "Warning: Y is too small, potentially causing instability."
-              << std::endl;
     return;
   }
   locus::Vector3 c = po * (damping / (2.f * Y)) + p_vo * (1.0f / Y);
@@ -135,4 +132,37 @@ void ParticleFakeSpring::updateForce(Particle *particle, real duration) {
       (pt - po) * (1.f / (duration * duration)) - p_vo * duration;
 
   particle->addForce(acceleration * particle->getMass());
+}
+
+ParticleSpring::ParticleSpring(real restLength, real springConstant,
+                               real damping) {
+  ParticleSpring::restLength = restLength;
+  ParticleSpring::springConstant = springConstant;
+  ParticleSpring::damping = damping;
+}
+
+void ParticleSpring::updateForce(Particle *particleAB[2], real duration) {
+  // hookes law f = k(x)
+  locus::Vector3 difference = particleAB[0]->position - particleAB[1]->position;
+  real magnitudeDiff = difference.magnitude();
+  locus::Vector3 normal = difference;
+  normal.normalize();
+  real changeInLength = magnitudeDiff - restLength;
+  real forceScalar = springConstant * changeInLength;
+  locus::Vector3 forceAlongNormal = normal * forceScalar;
+  particleAB[0]->addForce(forceAlongNormal * -1);
+  particleAB[1]->addForce(forceAlongNormal);
+  // velocity update
+  real totalInverseMass =
+      particleAB[0]->getInverseMass() + particleAB[1]->getInverseMass();
+  if (totalInverseMass <= 0) {
+    return;
+  }
+  locus::Vector3 vAB = particleAB[0]->velocity - particleAB[1]->velocity;
+  real vrel = vAB.dotProduct(normal);
+  real newRel = vrel * expf(-damping * duration);
+  real vrelDelta = newRel - vrel;
+  vrelDelta /= totalInverseMass;
+  particleAB[0]->velocity += normal * vrelDelta * particleAB[0]->getInverseMass();
+  particleAB[1]->velocity -= normal * vrelDelta * particleAB[1]->getInverseMass();
 }
