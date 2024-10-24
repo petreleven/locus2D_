@@ -10,7 +10,6 @@
        <b style="color:orange;">Soft body system</b>: 
        Ability to create soft bodies by defining particle positions and springs in between the particles. Implementation is inspired
       by Jelly car physics .
-         <img src="./demo_videos/softbody.gif" alt="Softbodies Demo" width="250" height="250">
     </td>
     <td>
       <img src="./demo_videos/fireworks.gif" alt="Fireworks Demo" width="250" height="250">
