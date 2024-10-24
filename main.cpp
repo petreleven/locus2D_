@@ -27,15 +27,46 @@ groundCollision(std::vector<MassAggregate *> &shapes, unsigned screenHeight,
 
 std::unordered_map<Particle *, bool> draggingStates;
 MassAggregate shape = MassAggregate();
+MassAggregate shape2 = MassAggregate();
+
 Particle a = Particle(locus::Vector3(200, 400, 0), locus::Vector3(0, 0, 0), 0.8,
                       100, GRAY);
-Particle b = Particle(locus::Vector3(400, 400, 0), locus::Vector3(0, 0, 0), 0.8,
+Particle b = Particle(locus::Vector3(250, 400, 0), locus::Vector3(0, 0, 0), 0.8,
                       100, GRAY);
-Particle c = Particle(locus::Vector3(400, 600, 0), locus::Vector3(0, 0, 0), 0.8,
+Particle c = Particle(locus::Vector3(350, 400, 0), locus::Vector3(0, 0, 0), 0.8,
                       100, GRAY);
-Particle d = Particle(locus::Vector3(200, 600, 0), locus::Vector3(0, 0, 0), 0.8,
+Particle d = Particle(locus::Vector3(350, 450, 0), locus::Vector3(0, 0, 0), 0.8,
                       100, GRAY);
-MassAggregate shape2 = MassAggregate();
+Particle e = Particle(locus::Vector3(250, 450, 0), locus::Vector3(0, 0, 0), 0.8,
+                      100, GRAY);
+Particle f = Particle(locus::Vector3(250, 500, 0), locus::Vector3(0, 0, 0), 0.8,
+                      100, GRAY);
+Particle g = Particle(locus::Vector3(350, 500, 0), locus::Vector3(0, 0, 0), 0.8,
+                      100, GRAY);
+
+Particle h = Particle(locus::Vector3(350, 550, 0), locus::Vector3(0, 0, 0), 0.8,
+                      100, GRAY);
+
+Particle i = Particle(locus::Vector3(250, 550, 0), locus::Vector3(0, 0, 0), 0.8,
+                      100, GRAY);
+
+Particle j = Particle(locus::Vector3(250, 600, 0), locus::Vector3(0, 0, 0), 0.8,
+                      100, GRAY);
+
+Particle k = Particle(locus::Vector3(350, 600, 0), locus::Vector3(0, 0, 0), 0.8,
+                      100, GRAY);
+
+Particle l = Particle(locus::Vector3(350, 650, 0), locus::Vector3(0, 0, 0), 0.8,
+                      100, GRAY);
+
+Particle m = Particle(locus::Vector3(250, 650, 0), locus::Vector3(0, 0, 0), 0.8,
+                      100, GRAY);
+Particle n = Particle(locus::Vector3(200, 650, 0), locus::Vector3(0, 0, 0), 0.8,
+                      100, GRAY);
+
+Particle o = Particle(locus::Vector3(200, 500, 0), locus::Vector3(0, 0, 0), 0.8,
+                      100, GRAY);
+
 Particle a2 = Particle(locus::Vector3(250, 100, 0), locus::Vector3(0, 0, 0),
                        0.8, 100, GRAY);
 Particle b2 = Particle(locus::Vector3(350, 100, 0), locus::Vector3(0, 0, 0),
@@ -44,33 +75,81 @@ Particle c2 = Particle(locus::Vector3(350, 200, 0), locus::Vector3(0, 0, 0),
                        0.8, 100, GRAY);
 Particle d2 = Particle(locus::Vector3(250, 200, 0), locus::Vector3(0, 0, 0),
                        0.8, 100, GRAY);
+Particle e2 = Particle(locus::Vector3(200, 150, 0), locus::Vector3(0, 0, 0),
+                       0.8, 100, GRAY);
 
 int main() {
   BridgesV2 app = BridgesV2();
-  shape.width = 200;
-  shape.springK = 200;
-  shape.damping = 6;
   shape.addParticle(a);
   shape.addParticle(b);
   shape.addParticle(c);
   shape.addParticle(d);
-  shape2.width = 100;
-  shape2.springK = 200;
-  shape2.damping = 6;
+  shape.addParticle(e);
+  shape.addParticle(f);
+  shape.addParticle(g);
+  shape.addParticle(h);
+  shape.addParticle(i);
+  shape.addParticle(j);
+  shape.addParticle(k);
+  shape.addParticle(l);
+  shape.addParticle(m);
+  shape.addParticle(n);
+  shape.addParticle(o);
+
   shape2.addParticle(a2);
   shape2.addParticle(b2);
   shape2.addParticle(c2);
   shape2.addParticle(d2);
+  shape2.addParticle(e2);
   shape2.setAcceleration(gravity);
   shape.setAcceleration(gravity);
+  shape.color = RED;
   shape2.color = ORANGE;
   std::vector<MassAggregate *> staticshapes{&shape};
   std::vector<MassAggregate *> dynamicshapes{&shape2}; //&app.shape};
   std::vector<MassAggregate *> allobjects = {&shape, &shape2};
-  ParticleCollisionReSolver particleresolver = ParticleCollisionReSolver(8);
+  ParticleCollisionReSolver particleresolver = ParticleCollisionReSolver(20);
   ParticleEdgeCollisionDetection detector = ParticleEdgeCollisionDetection();
   ParticleEdgeCollisionReSolver edgeresolver =
-      ParticleEdgeCollisionReSolver(16 * 10);
+      ParticleEdgeCollisionReSolver(100);
+  SpringForceRegistry springregistry;
+  springregistry.add(&shape.particles[0], &shape.particles[1]);
+  springregistry.add(&shape.particles[1], &shape.particles[2]);
+  springregistry.add(&shape.particles[2], &shape.particles[3]);
+  springregistry.add(&shape.particles[3], &shape.particles[4]);
+  springregistry.add(&shape.particles[4], &shape.particles[5]);
+  springregistry.add(&shape.particles[5], &shape.particles[6]);
+  springregistry.add(&shape.particles[6], &shape.particles[7]);
+  springregistry.add(&shape.particles[7], &shape.particles[8]);
+  springregistry.add(&shape.particles[8], &shape.particles[9]);
+  springregistry.add(&shape.particles[9], &shape.particles[10]);
+  springregistry.add(&shape.particles[10], &shape.particles[11]);
+  springregistry.add(&shape.particles[11], &shape.particles[12]);
+  springregistry.add(&shape.particles[12], &shape.particles[13]);
+  springregistry.add(&shape.particles[13], &shape.particles[14]);
+
+  springregistry.add(&shape.particles[0], &shape.particles[4]);
+  springregistry.add(&shape.particles[1], &shape.particles[3]);
+  springregistry.add(&shape.particles[2], &shape.particles[4]);
+  springregistry.add(&shape.particles[5], &shape.particles[7]);
+  springregistry.add(&shape.particles[6], &shape.particles[8]);
+  springregistry.add(&shape.particles[9], &shape.particles[11]);
+  springregistry.add(&shape.particles[10], &shape.particles[12]);
+  springregistry.add(&shape.particles[9], &shape.particles[13]);
+  springregistry.add(&shape.particles[4], &shape.particles[14]);
+  springregistry.add(&shape.particles[5], &shape.particles[14]);
+  springregistry.add(&shape.particles[8], &shape.particles[14]);
+  springregistry.add(&shape.particles[9], &shape.particles[14]);
+
+  // shape2
+  springregistry.add(&shape2.particles[0], &shape2.particles[1]);
+  springregistry.add(&shape2.particles[1], &shape2.particles[2]);
+  springregistry.add(&shape2.particles[2], &shape2.particles[3]);
+  springregistry.add(&shape2.particles[3], &shape2.particles[0]);
+  springregistry.add(&shape2.particles[3], &shape2.particles[4]);
+  springregistry.add(&shape2.particles[4], &shape2.particles[0]);
+  ParticleCable cable(300, 0.8, shape2.particles[3], shape.particles[0]);
+
   Vector2 lastMousePos = GetMousePosition();
   while (!WindowShouldClose()) {
     app.startDraw();
@@ -82,7 +161,7 @@ int main() {
     app.update();
     // physics update
     if (dt > 0.016f && pause == 0) {
-      dt = 0.016f;
+      // dt = 0.016f;
       app.physicsUpdate(dt);
       std::vector<ParticleEdgeContact> contacts;
 
@@ -99,30 +178,70 @@ int main() {
         }
       }
 
-      auto groundcontacts = groundCollision(allobjects, 800, 800);
-      const size_t size = groundcontacts.size();
-      ParticleContact *contactsGen[size];
-      for (size_t i = 0; i < size; i++) {
-        contactsGen[i] = &groundcontacts[i];
-      }
-      particleresolver.solveCollision(contactsGen[0], size, dt);
+      // particle particle collisions
+      std::vector<ParticleContact> contactsShtoSh;
+      const real collisionThreshold = 1e-6f;
+      if (true) {
+        for (Particle &p1 : shape.particles) {
+          p1.radius = 2.1f;
+          for (Particle &p2 : shape2.particles) {
+            p2.radius = 2.1f;
+            // Calculate future positions
+            locus::Vector3 p1Future = p1.position + p1.velocity * dt;
+            locus::Vector3 p2Future = p2.position + p2.velocity * dt;
 
+            // Check current and future positions
+            locus::Vector3 relativePos = p1.position - p2.position;
+            locus::Vector3 relativeFuturePos = p1Future - p2Future;
+
+            real distanceSquared = relativePos.squareMagnitude();
+            real futureDictanceSquared = relativeFuturePos.squareMagnitude();
+            real collisionDistanceSquared =
+                (p1.radius + p2.radius) * (p1.radius + p2.radius);
+
+            if (distanceSquared <
+                    collisionDistanceSquared + collisionThreshold ||
+                futureDictanceSquared <
+                    collisionDistanceSquared + collisionThreshold) {
+
+              // Use the smaller distance for contact resolution
+              real distance =
+                  std::sqrt(std::min(distanceSquared, futureDictanceSquared));
+              real penetration = p1.radius + p2.radius - distance;
+
+              locus::Vector3 contactNormal =
+                  (distanceSquared < futureDictanceSquared) ? relativePos
+                                                            : relativeFuturePos;
+              contactNormal.normalize();
+
+              ParticleContact contact;
+              contact.contactNormal = contactNormal;
+              contact.p[0] = const_cast<Particle *>(&p1);
+              contact.p[1] = const_cast<Particle *>(&p2);
+              contact.penetration = penetration;
+              contact.restitution = 0.5f;
+
+              contactsShtoSh.push_back(contact);
+            }
+          }
+        }
+        particleresolver.solveCollision(contactsShtoSh.data(),
+                                        contactsShtoSh.size(), dt);
+      }
+      if (true) {
+        auto groundcontacts = groundCollision(allobjects, 800, 800);
+        particleresolver.solveCollision(groundcontacts.data(),
+                                        groundcontacts.size(), dt);
+      }
       edgeresolver.solveCollision(contacts, dt);
+      springregistry.updateForces(dt);
       shape.update(dt);
       shape2.update(dt);
     }
     // normalupdate
-    drag(shape.particles[0]);
-    mousedrag(shape.particles[0], lastMousePos);
+    drag(shape2.particles[0]);
+    mousedrag(shape2.particles[0], lastMousePos);
     // app.update();
-    Vector2 p1 =
-        Vector2{shape.particles[0].position.x, shape.particles[0].position.y};
-    Vector2 p2 =
-        Vector2{shape.particles[3].position.x, shape.particles[3].position.y};
-    Vector2 p3 =
-        Vector2{shape.particles[2].position.x, shape.particles[2].position.y};
-    Vector2 *points[] = {&p1, &p2, &p3};
-    DrawTriangleFan(points[0], 3, BLUE);
     shape.render();
     shape2.render();
     app.endDraw();
@@ -132,6 +251,7 @@ int main() {
 std::vector<ParticleContact>
 groundCollision(std::vector<MassAggregate *> &shapes, unsigned screenHeight,
                 unsigned screenWidth) {
+  screenHeight = 700;
   std::vector<ParticleContact> groundContacts;
   for (auto shape : shapes) {
     for (size_t i = 0; i < shape->particles.size(); i++) {
@@ -140,7 +260,7 @@ groundCollision(std::vector<MassAggregate *> &shapes, unsigned screenHeight,
         ParticleContact contact;
         contact.contactNormal = locus::Vector3(0.f, -1.0f, 0.f);
         contact.penetration = p.position.y - screenHeight;
-        contact.restitution = 0.2f;
+        contact.restitution = 0.f;
         contact.p[0] = &p;
         contact.p[1] = NULL;
         groundContacts.push_back(contact);
@@ -169,7 +289,7 @@ groundCollision(std::vector<MassAggregate *> &shapes, unsigned screenHeight,
 
 void drag(Particle &base) {
   float offsett = 3.f;
-  float force = 10000;
+  float force = 40000;
   if (IsKeyDown(KEY_RIGHT)) {
     base.addForce(locus::Vector3(force, 0, 0));
   }

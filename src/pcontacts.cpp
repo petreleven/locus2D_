@@ -1,4 +1,5 @@
 #include "../include/locus/pcontacts.h"
+#include <algorithm>
 #include <cmath>
 #include <cstddef>
 #include <iostream>
@@ -73,10 +74,6 @@ void ParticleContact::resolvePenetration(real dt) {
   if (totalInverseMass <= 0.0f) {
     return;
   }
-  // DrawLine(p[0]->position.x, p[0]->position.y,
-  //          p[0]->position.x + contactNormal.x * 1000,
-  //          p[0]->position.y + contactNormal.y * 1000, PINK);
-  //  movement_v =normal * -pen * 1/1/(m1 + m2)
   locus::Vector3 movementPen = contactNormal * (penetration / totalInverseMass);
   locus::Vector3 move_0 = movementPen * p[0]->getInverseMass();
   move[0] = move_0;
@@ -137,67 +134,154 @@ void ParticleEdgeContact::resolve(real dt) {
   }
 }
 
+struct AABB {
+  MassAggregate *a;
+  Particle *collidingParticle;
+
+private:
+  locus::Vector3 Vmax = locus::Vector3(std::numeric_limits<float>::min(),
+                                       std::numeric_limits<float>::min(), 0.f);
+  locus::Vector3 Vmin = locus::Vector3(std::numeric_limits<float>::max(),
+                                       std::numeric_limits<float>::max(), 0.f);
+
+public:
+  bool checkCollision() {
+    bool isColliding = false;
+    for (Particle &p : a->particles) {
+      Vmax = locus::Vector3(std::max(p.position.x, Vmax.x),
+                            std::max(p.position.y, Vmax.y), 0.f);
+      Vmin = locus::Vector3(std::min(p.position.x, Vmin.x),
+                            std::min(p.position.y, Vmin.y), 0.f);
+    }
+    const real boundingWidth = 0.1f;
+    locus::Vector3 collidingParticleboundingBoxMax(
+        collidingParticle->position.x + boundingWidth,
+        collidingParticle->position.y + boundingWidth, 0);
+    locus::Vector3 collidingParticleboundingBoxMin(
+        collidingParticle->position.x - boundingWidth,
+        collidingParticle->position.y - boundingWidth, 0);
+    bool xWithin = collidingParticleboundingBoxMax.x <= Vmax.x &&
+                   collidingParticleboundingBoxMin.x >= Vmin.x;
+    bool yWithin = collidingParticleboundingBoxMax.y <= Vmax.y &&
+                   collidingParticleboundingBoxMin.y >= Vmin.y;
+    // DEBUG BOUNDING BOX
+    if (false) {
+      DrawLineEx({Vmin.x, Vmin.y}, {Vmax.x, Vmin.y}, 10, BLUE);
+      DrawLineEx({Vmin.x, Vmax.y}, {Vmax.x, Vmax.y}, 10, BLUE);
+      DrawLineEx({Vmin.x, Vmin.y}, {Vmin.x, Vmax.y}, 10, BLUE);
+      DrawLineEx({Vmax.x, Vmin.y}, {Vmax.x, Vmax.y}, 10, BLUE);
+
+      DrawLineEx({collidingParticleboundingBoxMin.x,
+                  collidingParticleboundingBoxMin.y},
+                 {collidingParticleboundingBoxMin.x,
+                  collidingParticleboundingBoxMax.y},
+                 10, GREEN);
+      DrawLineEx({collidingParticleboundingBoxMax.x,
+                  collidingParticleboundingBoxMin.y},
+                 {collidingParticleboundingBoxMax.x,
+                  collidingParticleboundingBoxMax.y},
+                 10, GREEN);
+      DrawLineEx({collidingParticleboundingBoxMin.x,
+                  collidingParticleboundingBoxMin.y},
+                 {collidingParticleboundingBoxMax.x,
+                  collidingParticleboundingBoxMin.y},
+                 10, GREEN);
+      DrawLineEx({collidingParticleboundingBoxMin.x,
+                  collidingParticleboundingBoxMax.y},
+                 {collidingParticleboundingBoxMax.x,
+                  collidingParticleboundingBoxMax.y},
+                 10, GREEN);
+    }
+    isColliding = xWithin && yWithin;
+    return isColliding;
+  }
+  real getShapeMaxX() const { return Vmax.x; }
+  real getShapeMaxY() const { return Vmax.y; }
+};
+
 std::vector<ParticleEdgeContact> ParticleEdgeCollisionDetection::createContacts(
     Particle &collidingParticle, std::vector<MassAggregate *> shapes) {
-  locus::Vector3 rayEnd =
-      locus::Vector3(collidingParticle.position.x + 150000.f,
-                     collidingParticle.position.y, 0.f);
   // DrawLineV({collidingParticle.position.x, collidingParticle.position.y},
-  //           {rayEnd.x, rayEnd.y}, WHITE);
+  //         {rayEnd.x, rayEnd.y}, WHITE);
+
   std::vector<ParticleEdgeContact> generatedcontacts;
   for (MassAggregate *shape1 : shapes) {
-    auto shape = *shape1;
-    unsigned numIntersections = 0;
+    auto &shape_ = *shape1;
     real closestDistance = real_INFINITY;
     std::pair<unsigned, unsigned> closestEdgeRecord;
     locus::Vector3 collisionNormal;
-    bool isClose = false;
-    for (const auto &particle : shape.particles) {
-      if ((particle.position - collidingParticle.position).magnitude() <= 600.0f) {
-        isClose = true;
+    locus::Vector3 edgeStart;
+    locus::Vector3 edgeEnd;
+    //------------COLLISION CHECK------------------//
+    // AABBB
+
+    AABB aaBBcollisionChecker;
+    aaBBcollisionChecker.a = shape1;
+    aaBBcollisionChecker.collidingParticle = &collidingParticle;
+    if (!aaBBcollisionChecker.checkCollision()) {
+      continue;
+    }
+
+    // RAY CAST
+
+    locus::Vector3 rayEndH = locus::Vector3(
+        collidingParticle.position.x + aaBBcollisionChecker.getShapeMaxX(),
+        collidingParticle.position.y, 0.f);
+    locus::Vector3 rayEndV = locus::Vector3(
+        collidingParticle.position.x + 1000.f,
+        collidingParticle.position.y + aaBBcollisionChecker.getShapeMaxY(),
+        0.f);
+    locus::Vector3 allrays[] = {rayEndH, rayEndV};
+    bool notInShape =false;
+    for (size_t i = 0; i < 2; i++) {
+      unsigned int numIntersections = 0;
+      auto rayEnd = allrays[i];
+      for (size_t i = 0; i < shape_.particles.size(); i++) {
+        unsigned next = (i + 1) % shape_.particles.size();
+        edgeStart = shape_.particles[i].position;
+        edgeEnd = shape_.particles[next].position;
+        if (LineInterSection(rayEnd, collidingParticle.position, edgeStart,
+                             edgeEnd)) {
+          numIntersections++;
+         // std::cerr << i << " :intersection idx......" << i << ", " << next
+           //         << "\n";
+        }
+      }
+      //std::cerr << "numIntersects " << numIntersections << "\n";
+      if (numIntersections % 2 == 0) {
+        notInShape=true;
         break;
       }
     }
-    if (!isClose)
-      continue;
-    for (size_t i = 0; i < shape.particles.size(); i++) {
-      locus::Vector3 edgeStart = shape.particles[i].position;
-      locus::Vector3 edgeEnd =
-          shape.particles[(i + 1) % shape.particles.size()].position;
-      if (LineInterSection(collidingParticle.position, rayEnd, edgeStart,
-                           edgeEnd)) {
-        numIntersections++;
+    if(notInShape){
+        continue;
+    }
+
+    //----------END COLLISION CHECK ----------------------//
+    for (size_t i = 0; i < shape_.particles.size(); i++) {
+      unsigned next = (i + 1) % shape_.particles.size();
+      edgeStart = shape_.particles[i].position;
+      edgeEnd = shape_.particles[next].position;
+      auto resultPair = closestEdge(collidingParticle, edgeStart, edgeEnd);
+      real dist = resultPair.first;
+      // we are probabably inline with a line
+      if (dist > 1e6) {
+        continue;
+      }
+      if (std::abs(dist) < std::abs(closestDistance)) {
+        closestDistance = std::abs(dist);
+        closestEdgeRecord = std::pair<unsigned, unsigned>(i, next);
+        collisionNormal = (resultPair.second);
       }
     }
-    if (numIntersections % 2 == 1) {
-      for (size_t i = 0; i < shape.particles.size(); i++) {
-        locus::Vector3 edgeStart = shape.particles[i].position;
-        locus::Vector3 edgeEnd =
-            shape.particles[(i + 1) % shape.particles.size()].position;
-        auto resultPair = closestEdge(collidingParticle, edgeStart, edgeEnd);
-        real dist = resultPair.first;
-        // we are probabably inline with a line
-        if (dist > 1e6) {
-          return generatedcontacts;
-        }
-        if (std::abs(dist) < closestDistance) {
-          closestDistance = dist;
-          closestEdgeRecord = std::pair<unsigned, unsigned>(
-              i, (i + 1) % shape.particles.size());
-          collisionNormal = (resultPair.second);
-        }
-      }
-      ParticleEdgeContact contact;
-      contact.penetration = closestDistance;
-      contact.normal = collisionNormal;
-      contact.particleColliding = &collidingParticle;
-      contact.edgeParticleIndices[0] = closestEdgeRecord.first;
-      contact.edgeParticleIndices[1] = closestEdgeRecord.second;
-      contact.shape = shape1;
-      generatedcontacts.push_back(contact);
-      // std::cout << "Colliding with edge " << closestEdgeRecord.first << "&"
-      //         << closestEdgeRecord.second << "\n";
-    }
+    ParticleEdgeContact contact;
+    contact.penetration = closestDistance;
+    contact.normal = collisionNormal;
+    contact.particleColliding = &collidingParticle;
+    contact.edgeParticleIndices[0] = closestEdgeRecord.first;
+    contact.edgeParticleIndices[1] = closestEdgeRecord.second;
+    contact.shape = shape1;
+    generatedcontacts.push_back(contact);
   }
   return generatedcontacts;
 }
@@ -221,8 +305,7 @@ bool ParticleEdgeCollisionDetection::LineInterSection(
   real b2 = line2Start.x - line2End.x;
   real c2 = a2 * line2Start.x + b2 * line2Start.y;
   real determinant = a1 * b2 - a2 * b1;
-  // lines are parallel
-  if (std::abs(determinant) == 0.001f) {
+  if (determinant == 0.0f) {
     return false;
   }
   // check interception
@@ -258,10 +341,10 @@ ParticleEdgeCollisionDetection::closestEdge(Particle &collidingParticle,
   real projectionRatio = projection / edgeLength;
 
   locus::Vector3 closePoint = line2Start;
-  const float min = 0.01f;
+  const real min = 0.f;
   if (projectionRatio < min) {
     return std::pair<real, locus::Vector3>(std::numeric_limits<float>::max(),
-                                           locus::Vector3(0, 0, 0));
+                                           locus::Vector3(1, 0, 0));
   }
   if (projectionRatio == min) {
     closePoint = line2Start;
@@ -271,6 +354,7 @@ ParticleEdgeCollisionDetection::closestEdge(Particle &collidingParticle,
     closePoint = line2Start;
     closePoint += direction * projection;
   }
+
   real distanceToClosestPoint =
       (collidingParticle.position - closePoint).magnitude();
   // DrawCircle(closePoint.x, closePoint.y, 30, BLACK);
@@ -278,7 +362,52 @@ ParticleEdgeCollisionDetection::closestEdge(Particle &collidingParticle,
   normalizedV.normalize();
   return std::pair<real, locus::Vector3>(distanceToClosestPoint, normalizedV);
 }
+bool ParticleEdgeCollisionDetection::checkEdgeEdgeCollision(
+    locus::Vector3 &edgeStart, locus::Vector3 &edgeEnd,
+    locus::Vector3 &collidingParticleposition, locus::Vector3 &particlePrevPos,
+    locus::Vector3 &edgecollisionNormal, real &edgeCollisionPenetration) const {
+  // Pain
+  auto line1Start = edgeStart;
+  auto line1End = edgeEnd;
+  auto line2Start = collidingParticleposition;
+  auto line2End = particlePrevPos;
 
+  bool line1ContainedInLine2 =
+      std::min(line1Start.x, line1End.x) >=
+          std::min(line2Start.x, line2End.x) &&
+      std::max(line1Start.x, line1End.x) <=
+          std::max(line2Start.x, line2End.x) &&
+      std::min(line1Start.y, line1End.y) >=
+          std::min(line2Start.y, line2End.y) &&
+      std::max(line1Start.y, line1End.y) <= std::max(line2Start.y, line2End.y);
+
+  // Check if line2 is contained within line1
+  bool line2ContainedInLine1 =
+      std::min(line2Start.x, line2End.x) >=
+          std::min(line1Start.x, line1End.x) &&
+      std::max(line2Start.x, line2End.x) <=
+          std::max(line1Start.x, line1End.x) &&
+      std::min(line2Start.y, line2End.y) >=
+          std::min(line1Start.y, line1End.y) &&
+      std::max(line2Start.y, line2End.y) <= std::max(line1Start.y, line1End.y);
+  std::cout << line1ContainedInLine2 << " ," << line2ContainedInLine1 << "\n";
+  if (line1ContainedInLine2 || line2ContainedInLine1) {
+    locus::Vector3 a = collidingParticleposition - edgeStart;
+    locus::Vector3 b = collidingParticleposition - edgeEnd;
+    locus::Vector3 c = a.squareMagnitude() < b.squareMagnitude() ? a : b;
+    edgecollisionNormal = c;
+    edgeCollisionPenetration = c.magnitude();
+    edgecollisionNormal.normalize();
+    DrawLineV({collidingParticleposition.x, collidingParticleposition.y},
+              {collidingParticleposition.x + 240 * edgecollisionNormal.x,
+               collidingParticleposition.y + 240 * edgecollisionNormal.y},
+              WHITE);
+    DrawCircleV({collidingParticleposition.x, collidingParticleposition.y}, 20,
+                WHITE);
+    return true;
+  }
+  return false;
+}
 ParticleCollisionReSolver::ParticleCollisionReSolver(size_t numParticles) {
   ParticleCollisionReSolver::iterations = numParticles;
   ParticleCollisionReSolver::iterationsUsed = 0;

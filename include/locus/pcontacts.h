@@ -9,7 +9,7 @@ class MassAggregate;
 
 class ParticleContact {
 public:
-  Particle *p[2];
+  Particle *p[2] = {nullptr,  nullptr};
   real restitution;
   locus::Vector3 contactNormal;
   real penetration;

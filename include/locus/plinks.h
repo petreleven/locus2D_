@@ -60,22 +60,16 @@ private:
                 return atan2(a.y - center.y, a.x - center.x) >
                        atan2(b.y - center.y, b.x - center.x);
               });
-    if (points2D.size() == 4) {
-      // Draw two triangles to fill the rectangle
-      DrawTriangle(points2D[0], points2D[1], points2D[2],
-                   color); // First triangle
-      DrawTriangle(points2D[0], points2D[2], points2D[3],
-                   color); // Second triangle
+    if (points2D.size() >= 3) {
+      for (size_t i = 0; i < points2D.size() - 2; i++) {
+        DrawTriangle(points2D[0], points2D[i + 1], points2D[i + 2], color);
+      }
     }
   }
 
 public:
   std::vector<Particle> particles;
   std::vector<locus::Vector3> restPos;
-  std::vector<ParticleSpring> springForces;
-  real width = 100.f;
-  real springK = 10.f;
-  real damping = 10.f;
   Color color = BLACK;
   virtual void update(real dt);
   virtual void addParticle(Particle &particle);

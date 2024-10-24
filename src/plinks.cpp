@@ -50,20 +50,17 @@ void MassAggregate::addParticle(Particle &particle) {
   if (particles.size() <= 1) {
     return;
   }
-  ParticleSpring spring1(width, springK, damping);
-  springForces.clear();
-  springForces.push_back(spring1);
 }
 
 void MassAggregate::render() const {
-  drawRectangle();
+  //drawRectangle();
   for (size_t i = 0; i < particles.size(); i++) {
     int next = (i + 1) % particles.size();
-    // DrawCircleV({particles[i].position.x, particles[i].position.y},
-    //             particles[i].radius, color);
-    /*DrawLineEx({particles[i].position.x, particles[i].position.y},
-               {particles[next].position.x, particles[next].position.y}, 10,
-               GREEN);*/
+   // DrawCircleV({particles[i].position.x, particles[i].position.y},
+     //           particles[i].radius, color);
+    DrawLineEx({particles[i].position.x, particles[i].position.y},
+               {particles[next].position.x, particles[next].position.y}, 5,
+               BLACK);
   }
   // DrawLineEx({particles[0].position.x, particles[0].position.y},
   //            {particles[2].position.x, particles[2].position.y}, 10, color);
@@ -71,20 +68,9 @@ void MassAggregate::render() const {
   //            {particles[3].position.x, particles[3].position.y}, 10, color);
 }
 void MassAggregate::update(real dt) {
-  shapeMatch(dt);
-  Particle *particlesTemp[2];
-
-  for (size_t i = 0; i < particles.size(); i++) {
-    particlesTemp[0] = &particles[i];
-    particlesTemp[1] = &particles[(i + 1) % particles.size()];
-    springForces[0].updateForce(particlesTemp, dt);
+  if (particles.size() > 1) {
+    shapeMatch(dt);
   }
-  particlesTemp[0] = &particles[0];
-  particlesTemp[1] = &particles[2];
-  springForces[0].updateForce(particlesTemp, dt);
-  particlesTemp[0] = &particles[1];
-  particlesTemp[1] = &particles[3];
-  springForces[0].updateForce(particlesTemp, dt);
   for (Particle &p : particles) {
     p.integrate(dt);
   }
@@ -144,7 +130,7 @@ void MassAggregate::shapeMatch(real dt) {
                        0.f);
     targetRelPositions.push_back(rotatedV);
   }
-  const real stiffness = 20.f;
+  const real stiffness = 250.f;
   for (size_t i = 0; i < particles.size(); i++) {
     locus::Vector3 finalTargpos = currentCOM + targetRelPositions[i];
     locus::Vector3 diff = finalTargpos - particles[i].position;
@@ -156,51 +142,9 @@ void MassAggregate::shapeMatch(real dt) {
   }
 }
 
-MassAggregateCircle::MassAggregateCircle(locus::Vector3 center, real radius) {
-  const unsigned numPoints = 8;
-  real z = 0.0f;
-  for (size_t i = 0; i < numPoints; i++) {
-    real theta = 2 * PI * i / numPoints;
-    real x = center.x + radius * std::cos(theta);
-    real y = center.y + radius * std::sin(theta);
-    Particle p = Particle(locus::Vector3(x, y, z), locus::Vector3::Zero(), 0.8,
-                          1, this->color);
-    particles.push_back(p);
-  }
-
-  ParticleSpring spring1(2 * radius * std::sin(PI / numPoints), springK,
-                         damping);
-  ParticleSpring spring2(radius * 2, springK * 4, damping);
-  springForces.push_back(spring1);
-  springForces.push_back(spring2);
-}
-
-void MassAggregateCircle::render() const {
-  for (size_t i = 0; i < particles.size(); i++) {
-    int next = (i + 1) % particles.size();
-    DrawCircleV({particles[i].position.x, particles[i].position.y},
-                particles[i].radius, color);
-    DrawLineEx({particles[i].position.x, particles[i].position.y},
-               {particles[next].position.x, particles[next].position.y}, 11,
-               color);
-  }
-}
-
 void MassAggregateCircle::update(real dt) {
   for (Particle &p : particles) {
     p.integrate(dt);
-  }
-  Particle *particlesTemp[2];
-  for (size_t i = 0; i < particles.size(); i++) {
-    particlesTemp[0] = &particles[i];
-    particlesTemp[1] = &particles[(i + 1) % particles.size()];
-    springForces[0].updateForce(particlesTemp, dt);
-  }
-  // Diagonal springs
-  for (size_t i = 0; i < 4; i++) {
-    particlesTemp[0] = &particles[i];
-    particlesTemp[1] = &particles[(i + 4) % particles.size()];
-    springForces[1].updateForce(particlesTemp, dt);
   }
 }
 

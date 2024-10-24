@@ -163,6 +163,36 @@ void ParticleSpring::updateForce(Particle *particleAB[2], real duration) {
   real newRel = vrel * expf(-damping * duration);
   real vrelDelta = newRel - vrel;
   vrelDelta /= totalInverseMass;
-  particleAB[0]->velocity += normal * vrelDelta * particleAB[0]->getInverseMass();
-  particleAB[1]->velocity -= normal * vrelDelta * particleAB[1]->getInverseMass();
+  particleAB[0]->velocity +=
+      normal * vrelDelta * particleAB[0]->getInverseMass();
+  particleAB[1]->velocity -=
+      normal * vrelDelta * particleAB[1]->getInverseMass();
+}
+
+void SpringForceRegistry::add(Particle *a, Particle *b) {
+  SingleRegister sr = SingleRegister(a, b);
+  registrations.push_back(sr);
+}
+void SpringForceRegistry::add(Particle *a, Particle *b, real restLength) {
+  SingleRegister sr = SingleRegister(a, b, restLength);
+  registrations.push_back(sr);
+}
+void SpringForceRegistry::remove(Particle *a, Particle *b) {
+  for (auto iterator = registrations.begin(); iterator != registrations.end();
+       iterator++) {
+    if (a == iterator->a && b == iterator->b) {
+      registrations.erase(iterator);
+      break;
+    }
+  }
+}
+void SpringForceRegistry::updateForces(real dt) {
+  Particle *targets[2];
+  for (auto p = registrations.begin(); p != registrations.end(); p++) {
+    Particle *a = p->a;
+    Particle *b = p->b;
+    targets[0] = a;
+    targets[1] = b;
+    p->fg.updateForce(targets, dt);
+  }
 }
