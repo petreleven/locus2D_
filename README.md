@@ -12,7 +12,7 @@
       by Jelly car physics .
     </td>
     <td>
-      <img src="./demo_videos/fireworks.gif" alt="Fireworks Demo" width="250" height="250">
+      <img src="./demo_videos/softbody.gif" alt="Softbodies Demo" width="250" height="250">
     </td>
   </tr>
   <tr>
